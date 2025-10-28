@@ -12,7 +12,7 @@ PROMPT_ARN = "arn:aws:bedrock:us-east-1:471112955224:prompt/RR77CDGDJM"
 REGION = "us-east-1"
 
 # Configurações de agendamento
-START_DATE = "2025-11-15"  # Data inicial no formato YYYY-MM-DD
+START_DATE = "2025-12-15"  # Data inicial no formato YYYY-MM-DD
 INTERVAL_DAYS = 1  # Intervalo entre publicações (1=diário, 7=semanal)
 
 def load_video_data():
