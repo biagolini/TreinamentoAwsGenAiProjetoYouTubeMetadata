@@ -46,11 +46,12 @@ def check_pdfs_in_s3(videos):
     found_files = []
     
     for video in videos:
-        # Usa a extensão correta baseada no file_type
-        if video["file_type"] == "txt":
-            file_name = video["file_name"].replace(".mp4", ".txt")
-        else:  # Default para PDF
-            file_name = video["file_name"].replace(".mp4", ".pdf")
+        # Mapeia file_type para extensão correta
+        file_type = video["file_type"].lower()
+        if file_type in ["pdf", "doc", "docx", "html", "txt", "md"]:
+            file_name = video["file_name"].replace(".mp4", f".{file_type}")
+        else:
+            file_name = video["file_name"].replace(".mp4", ".pdf")  # Default para PDF
             
         try:
             s3.head_object(Bucket=S3_BUCKET, Key=file_name)

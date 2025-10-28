@@ -26,11 +26,12 @@ def load_video_data():
                     "video_id": row["video_id"],
                     "video_title": row["video_title"],
                     "file_name": row["file_name"],
-                    "file_type": row.get("file_type", "pdf")  # Default para PDF se não especificado
+                    "file_type": row.get("file_type", "pdf").lower(),  # Normaliza para minúsculo
+                    "reference_link": row.get("reference_link", "").strip()  # Link opcional
                 })
     return videos
 
-def generate_metadata_with_bedrock(bedrock_client, file_s3_key, file_type, video_title, video_id, scheduled_date):
+def generate_metadata_with_bedrock(bedrock_client, file_s3_key, file_type, video_title, video_id, scheduled_date, reference_link=""):
     """Gera metadados usando AWS Bedrock com document via S3"""
     
     print(f"  🔍 Iniciando geração de metadados...")
@@ -71,9 +72,14 @@ def generate_metadata_with_bedrock(bedrock_client, file_s3_key, file_type, video
     ]
     
     # Variáveis do prompt
+    reference_instruction = ""
+    if reference_link:
+        reference_instruction = f"Include at the end of all video descriptions this reference link: {reference_link}"
+    
     prompt_variables = {
         "video_id": {"text": video_id},
-        "scheduled_date": {"text": scheduled_date}
+        "scheduled_date": {"text": scheduled_date},
+        "reference_link": {"text": reference_instruction}
     }
     
     print(f"  📝 Variáveis do prompt: {prompt_variables}")
@@ -167,10 +173,11 @@ def main():
         print(f"\n[{i}/{len(videos)}] Processando: {video['file_name']}")
         
         # Converte nome do arquivo para extensão correta
-        if video["file_type"] == "txt":
-            file_key = video["file_name"].replace(".mp4", ".txt")
-        else:  # Default para PDF
-            file_key = video["file_name"].replace(".mp4", ".pdf")
+        file_type = video["file_type"]
+        if file_type in ["pdf", "doc", "docx", "html", "txt", "md"]:
+            file_key = video["file_name"].replace(".mp4", f".{file_type}")
+        else:
+            file_key = video["file_name"].replace(".mp4", ".pdf")  # Default para PDF
         
         # Verifica se arquivo existe no S3
         if not verify_file_exists(s3_client, file_key):
@@ -195,10 +202,11 @@ def main():
         new_metadata = generate_metadata_with_bedrock(
             bedrock_client, 
             file_key,
-            video["file_type"],
+            file_type,
             video["video_title"],
             video_id,
-            scheduled_date
+            scheduled_date,
+            video.get("reference_link", "")
         )
         
         if new_metadata:

@@ -20,6 +20,7 @@ Este script gera uma tabela CSV com os vídeos mais recentes do seu canal do You
   - `video_title`: Título atual do vídeo
   - `file_name`: Campo com texto "ADICIONAR_NOME_ARQUIVO_MANUALMENTE" para edição manual
   - `file_type`: Tipo de arquivo fonte (padrão: "pdf", pode ser editado para "txt")
+  - `reference_link`: Link de referência opcional (padrão: vazio)
 
 ## Configuração
 
@@ -28,19 +29,39 @@ Este script gera uma tabela CSV com os vídeos mais recentes do seu canal do You
 
 ## Tipos de Arquivo Suportados
 
-### PDF (Padrão)
-- **Uso**: Documentação técnica complexa, manuais, guias detalhados
-- **Vantagens**: Formatação preservada, imagens, tabelas
-- **Desvantagens**: Processamento mais lento, maior uso de tokens
+O projeto suporta todos os formatos compatíveis com o método `converse` do AWS Bedrock:
 
-### TXT (Alternativa)
-- **Uso**: Conteúdo textual simples, notas, resumos
-- **Vantagens**: Processamento mais rápido, menor uso de tokens
-- **Desvantagens**: Sem formatação, apenas texto puro
+### MD (Markdown) - Recomendado para Roteiros
+- **Uso**: Roteiros de vídeo, documentação técnica, tutoriais
+- **Vantagens**: Formatação estruturada, facilmente manipulado por IAs como Amazon Q
+- **Integração IA**: Amazon Q (plugin VSCode) pode revisar e melhorar significativamente a qualidade do texto
+- **Ideal para**: Criação colaborativa de roteiros com assistência de IA
 
-### Quando usar cada tipo:
-- **PDF**: Para documentação oficial AWS, guias técnicos detalhados
-- **TXT**: Para resumos, notas simplificadas, conteúdo que não requer formatação
+### TXT (Texto Simples) - Recomendado para Simplicidade
+- **Uso**: Roteiros simples, notas, conteúdo direto
+- **Vantagens**: Processamento rápido, menor uso de tokens, máxima simplicidade
+- **Ideal para**: Conteúdo sem formatação, rascunhos rápidos
+
+### DOC/DOCX (Microsoft Word)
+- **Uso**: Roteiros elaborados por usuários menos técnicos
+- **Vantagens**: Interface amigável, formatação rica, amplamente conhecido
+- **Ideal para**: Usuários com pouca habilidade técnica que preferem editores visuais
+
+### PDF (Para Conteúdo Pronto)
+- **Uso**: Documentação oficial AWS, artigos científicos, manuais técnicos
+- **Vantagens**: Formatação preservada, conteúdo já finalizado
+- **Ideal para**: Quando o texto já vem pronto e não precisa de edição
+
+### HTML (Web Content)
+- **Uso**: Conteúdo web, documentação online, artigos formatados
+- **Vantagens**: Estrutura semântica, links, formatação web
+- **Ideal para**: Artigos web, documentação online
+
+### Recomendações por Caso de Uso:
+- **Roteiros novos**: MD (com Amazon Q) > TXT > DOC/DOCX
+- **Documentação existente**: PDF > HTML
+- **Usuários não-técnicos**: DOC/DOCX > TXT
+- **Máxima qualidade com IA**: MD + Amazon Q plugin
 
 ## Pré-requisitos
 

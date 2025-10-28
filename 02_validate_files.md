@@ -8,7 +8,7 @@ Este script valida se existem correspondências entre os vídeos listados no CSV
 
 1. **Lê** o arquivo `YouTube_Data/videos_table.csv` editado manualmente
 2. **Filtra** apenas vídeos com `file_name` preenchido (ignora linhas com texto padrão)
-3. **Detecta tipo de arquivo**: Usa coluna `file_type` (pdf/txt) para verificar extensão correta
+3. **Detecta tipo de arquivo**: Usa coluna `file_type` (pdf|doc|docx|html|txt|md) para verificar extensão correta
 4. **Verifica arquivos no S3**: Busca arquivos com extensão apropriada no bucket configurado
 5. **Verifica vídeos no YouTube**: Usa `video_id` para confirmar existência via API
 6. **Exibe relatório** detalhado de arquivos encontrados e faltando
@@ -16,9 +16,9 @@ Este script valida se existem correspondências entre os vídeos listados no CSV
 ## Validações realizadas
 
 ### Arquivos no Amazon S3
-- **PDF**: Converte `.mp4` para `.pdf` quando `file_type = "pdf"`
-- **TXT**: Converte `.mp4` para `.txt` quando `file_type = "txt"`
-- Verifica existência no bucket `randon-bucket-name`
+- **Todos os tipos**: Converte `.mp4` para extensão apropriada baseada em `file_type`
+- Suporta: `.pdf`, `.doc`, `.docx`, `.html`, `.txt`, `.md`
+- Verifica existência no bucket configurado
 - Lista arquivos encontrados e faltando em ordem alfabética
 
 ### Vídeos no YouTube
@@ -56,15 +56,27 @@ Vídeos: 2 encontrados, 0 faltando
 
 ## Tipos de Arquivo Suportados
 
+O script valida todos os formatos compatíveis com o método `converse` do AWS Bedrock:
+
+### MD (Markdown)
+- **Uso**: Roteiros de vídeo, documentação técnica
+- **Verificação**: Busca arquivo `.md` no S3
+
+### TXT (Texto Simples)
+- **Uso**: Roteiros simples, conteúdo direto
+- **Verificação**: Busca arquivo `.txt` no S3
+
+### DOC/DOCX (Microsoft Word)
+- **Uso**: Roteiros elaborados, documentos formatados
+- **Verificação**: Busca arquivo `.doc` ou `.docx` no S3
+
 ### PDF
-- **Uso**: Documentação técnica complexa, manuais oficiais AWS
-- **Vantagens**: Formatação preservada, imagens, tabelas
+- **Uso**: Documentação oficial AWS, artigos científicos
 - **Verificação**: Busca arquivo `.pdf` no S3
 
-### TXT
-- **Uso**: Conteúdo textual simples, resumos, notas
-- **Vantagens**: Processamento mais rápido, menor uso de tokens
-- **Verificação**: Busca arquivo `.txt` no S3
+### HTML
+- **Uso**: Conteúdo web, documentação online
+- **Verificação**: Busca arquivo `.html` no S3
 
 ## Pré-requisitos
 
@@ -109,7 +121,8 @@ pip install boto3 google-auth google-auth-oauthlib google-auth-httplib2 google-a
 ```csv
 video_id,video_title,file_name,file_type
 abc123,03 amazonq developer ug,03_amazonq-developer-ug.mp4,pdf
-def456,04 amazonq developer ug,04_amazonq-developer-ug.mp4,txt
+def456,04 amazonq developer ug,04_amazonq-developer-ug.mp4,md
+ghi789,05 tutorial completo,05_tutorial-completo.mp4,docx
 ```
 
 ## Próximo passo

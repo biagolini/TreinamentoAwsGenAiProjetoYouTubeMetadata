@@ -5,7 +5,7 @@ import googleapiclient.discovery
 from google.oauth2.credentials import Credentials
 
 # Configuração
-MAX_VIDEOS = 5
+MAX_VIDEOS = 30
 SCOPES = ["https://www.googleapis.com/auth/youtube.readonly"]
 
 def main():
@@ -39,7 +39,7 @@ def main():
     for item in videos_response["items"]:
         video_id = item["snippet"]["resourceId"]["videoId"]
         video_title = item["snippet"]["title"]
-        videos_data.append([video_id, video_title, "ADICIONAR_NOME_ARQUIVO_MANUALMENTE", "pdf"])
+        videos_data.append([video_id, video_title, "ADICIONAR_NOME_ARQUIVO_MANUALMENTE", "pdf", ""])
 
     # Ordenar por título alfabeticamente
     videos_data.sort(key=lambda x: x[1])
@@ -50,7 +50,7 @@ def main():
     
     with open(csv_path, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(["video_id", "video_title", "file_name", "file_type"])
+        writer.writerow(["video_id", "video_title", "file_name", "file_type", "reference_link"])
         writer.writerows(videos_data)
     
     print(f"CSV salvo em: {csv_path}")

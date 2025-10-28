@@ -2,12 +2,12 @@
 
 ## Propósito
 
-Este script processa arquivos de documentação AWS (PDF ou TXT) armazenados no S3 e gera metadados otimizados para YouTube usando AWS Bedrock, criando títulos, descrições e tags multilíngues para vídeos baseados em conteúdo gerado por IA.
+Este script processa arquivos de documentação ou roteiros (PDF, DOC, DOCX, HTML, TXT, MD) armazenados no S3 e gera metadados otimizados para YouTube usando AWS Bedrock, criando títulos, descrições e tags multilíngues para vídeos baseados em conteúdo gerado por IA.
 
 ## O que o código faz
 
-1. **Lê** o arquivo `YouTube_Data/videos_table.csv` editado com nomes de arquivos e tipos
-2. **Verifica** existência dos arquivos correspondentes no S3 (PDF ou TXT)
+1. **Lê** o arquivo `YouTube_Data/videos_table.csv` editado com nomes de arquivos, tipos e links de referência
+2. **Verifica** existência dos arquivos correspondentes no S3 (PDF, DOC, DOCX, HTML, TXT, MD)
 3. **Processa cada vídeo** usando AWS Bedrock com document context apropriado
 4. **Gera metadados** otimizados baseados no conteúdo do arquivo
 5. **Salva progressivamente** em arquivo JSON para uso posterior
@@ -43,17 +43,33 @@ INTERVAL_DAYS = 7
 
 ## Tipos de Arquivo Suportados
 
+O script processa todos os formatos compatíveis com o método `converse` do AWS Bedrock:
+
+### MD (Markdown) - Recomendado para Roteiros
+- **Uso**: Roteiros de vídeo, documentação técnica estruturada
+- **Vantagens**: Formatação preservada, processamento eficiente, ideal para IA
+- **Recomendado para**: Roteiros criados com Amazon Q, conteúdo estruturado
+
+### TXT (Texto Simples) - Recomendado para Velocidade
+- **Uso**: Roteiros simples, notas, conteúdo textual puro
+- **Vantagens**: Processamento rápido (30-60s), menor uso de tokens, menos timeouts
+- **Recomendado para**: Conteúdo simples ou quando velocidade é prioridade
+
+### DOC/DOCX (Microsoft Word)
+- **Uso**: Roteiros elaborados, documentos formatados
+- **Vantagens**: Formatação rica, familiar para usuários não-técnicos
+- **Recomendado para**: Usuários que preferem editores visuais
+
 ### PDF
-- **Uso**: Documentação oficial AWS, guias técnicos detalhados
+- **Uso**: Documentação oficial AWS, artigos científicos, guias técnicos
 - **Vantagens**: Formatação preservada, imagens, tabelas, conteúdo completo
 - **Desvantagens**: Processamento mais lento (60-120s), maior uso de tokens
-- **Recomendado para**: Conteúdo complexo que requer máxima qualidade
+- **Recomendado para**: Documentação técnica complexa já finalizada
 
-### TXT
-- **Uso**: Resumos, notas simplificadas, conteúdo textual puro
-- **Vantagens**: Processamento rápido (30-60s), menor uso de tokens, menos timeouts
-- **Desvantagens**: Sem formatação, apenas texto puro
-- **Recomendado para**: Conteúdo simples ou quando velocidade é prioridade
+### HTML
+- **Uso**: Conteúdo web, documentação online, artigos formatados
+- **Vantagens**: Estrutura semântica, links, formatação web
+- **Recomendado para**: Artigos web, documentação online
 
 ## Estratégia de Geração
 
@@ -159,7 +175,7 @@ Total de vídeos no arquivo: 4
 
 ### Arquivo CSV editado
 - Execute `01_videos_table.py` e `02_validate_files.py` primeiro
-- CSV deve ter `file_name` e `file_type` preenchidos corretamente
+- CSV deve ter `file_name`, `file_type` e opcionalmente `reference_link` preenchidos corretamente
 
 ### Credenciais AWS
 - Variáveis de ambiente AWS configuradas
@@ -173,6 +189,25 @@ Total de vídeos no arquivo: 4
 ### Dependências Python
 ```bash
 pip install boto3
+```
+
+## Link de Referência (Opcional)
+
+### Funcionalidade
+- **Coluna**: `reference_link` no CSV
+- **Uso**: Link para documentação original, artigo ou fonte do conteúdo
+- **Comportamento**: Se preenchido, será incluído automaticamente no final de todas as descrições
+
+### Implementação
+- **Vazio**: Nenhuma referência é adicionada
+- **Preenchido**: Adiciona texto padrão: "Include at the end of all video descriptions this reference link: [URL]"
+- **Automático**: O prompt processa e inclui o link nas descrições de todos os idiomas
+
+### Exemplo de Uso
+```csv
+video_id,video_title,file_name,file_type,reference_link
+abc123,AWS Bedrock Guide,bedrock-guide.mp4,pdf,https://docs.aws.amazon.com/bedrock/
+def456,Lambda Tutorial,lambda-tutorial.mp4,md,
 ```
 
 ## Configuração

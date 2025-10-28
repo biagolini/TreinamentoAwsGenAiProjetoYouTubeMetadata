@@ -40,6 +40,7 @@ Your task is to analyze the provided PDF document (AWS documentation chapter) an
 - Use accessible language that doesn't intimidate beginners
 - Include relevant hashtags based on the AWS service and general concepts
 - Mention this is part of a comprehensive AWS learning series
+- {{reference_link}}
 
 ### Tags (15 unique tags):
 - Start with the main AWS service name

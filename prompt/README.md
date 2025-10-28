@@ -25,10 +25,11 @@ Use o conteúdo do arquivo `prompt.txt` para criar/atualizar o prompt no AWS Bed
 - **Descrição**: `Gerador de metadados para vídeos AI baseados em documentação AWS`
 
 ### 2. Variáveis de Input
-Configure apenas estas 2 variáveis:
+Configure estas 3 variáveis:
 
-- `video_url` (tipo: text)
+- `video_id` (tipo: text)
 - `scheduled_date` (tipo: text)
+- `reference_link` (tipo: text)
 
 ### 3. Configurações de Inferência
 - **Modelo**: `amazon.nova-pro-v1:0`

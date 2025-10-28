@@ -88,17 +88,57 @@ O sistema integra AWS Bedrock, YouTube Data API e Google Cloud para automatizar 
 - Canal ativo no YouTube
 - Conta Google Cloud Platform
 
-### 2. Instalação de Dependências
+### 2. Ambiente Virtual e Dependências
+
+#### Criar e Ativar Ambiente Virtual
+```bash
+# Criar ambiente virtual
+python -m venv .venv
+
+# Ativar ambiente virtual
+# No macOS/Linux:
+source .venv/bin/activate
+# No Windows:
+.venv\Scripts\activate
+```
+
+#### Instalar Dependências
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Configuração AWS
-- Configure credenciais AWS via variáveis de ambiente
+### 3. Configuração de Variáveis de Ambiente
+
+#### Criar arquivo .env
+Crie um arquivo `.env` na raiz do projeto com suas credenciais:
+
+```bash
+# AWS Credentials
+AWS_ACCESS_KEY_ID=sua_access_key_aqui
+AWS_SECRET_ACCESS_KEY=sua_secret_key_aqui
+AWS_DEFAULT_REGION=us-east-1
+
+# S3 Configuration
+S3_BUCKET_NAME=seu-bucket-name
+
+# Bedrock Configuration
+BEDROCK_PROMPT_ARN=arn:aws:bedrock:us-east-1:account:prompt/ID
+```
+
+#### Carregar Variáveis (Opcional)
+O projeto pode usar python-dotenv para carregar automaticamente as variáveis do .env:
+
+```python
+from dotenv import load_dotenv
+load_dotenv()
+```
+
+### 4. Configuração AWS
+- Credenciais AWS já configuradas via arquivo .env
 - Crie bucket S3 para armazenar documentação
 - Configure prompt no AWS Bedrock Prompt Manager
 
-### 4. Configuração Google/YouTube
+### 5. Configuração Google/YouTube
 - Configure OAuth 2.0 no Google Cloud Console
 - Baixe `client_secret.json`
 - Habilite YouTube Data API v3
